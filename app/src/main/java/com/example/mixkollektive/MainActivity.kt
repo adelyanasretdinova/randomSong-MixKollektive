@@ -4,9 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -19,10 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
@@ -69,7 +68,7 @@ fun MyScreenContent(
     Column(
         Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center
     ) {
-        Text()
+        MixKollectiveTitle()
         RandomizerButton(
             onRandomizerButtonClicked = onRandomizerButtonClicked, modifier = Modifier
         )
@@ -77,8 +76,19 @@ fun MyScreenContent(
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-fun Text() {
+fun MyScreenContentPreview() {
+    val link = SpotifyLink("http://www.spotify.com/mysong")
+    val image = Image("https://www.udiscovermusic.com/wp-content/uploads/2019/05/Rihanna-Good-Girl-Gone-Bad-album-cover-820.jpg", 128)
+    val album = Album(listOf(image))
+    val track = Track(link, "My Track Best", album)
+    val item = Item(track)
+    MyScreenContent(onRandomizerButtonClicked = {}, item)
+}
+
+@Composable
+fun MixKollectiveTitle() {
     Text(text = "Get Your New Random Song", Modifier.padding(15.dp), fontSize = 30.sp)
 }
 
@@ -91,7 +101,8 @@ fun RandomizerButton(
         modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
     ) {
         Button(
-            onClick = onRandomizerButtonClicked, modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
+            onClick = onRandomizerButtonClicked
         ) {
             Text(text = "New Song", modifier.padding(10.dp))
         }
@@ -127,7 +138,7 @@ fun ResultWindow(song: Item?) {
                 Image(
                     painter = rememberAsyncImagePainter(song.track.album.images[0].url),
                     contentDescription = null,
-                    Modifier.padding(10.dp),
+                    Modifier.padding(10.dp).testTag("Image"),
                     contentScale = ContentScale.Crop,
                 )
             }

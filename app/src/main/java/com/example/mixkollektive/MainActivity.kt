@@ -9,11 +9,8 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -21,6 +18,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,7 +78,10 @@ fun MyScreenContent(
 @Composable
 fun MyScreenContentPreview() {
     val link = SpotifyLink("http://www.spotify.com/mysong")
-    val image = Image("https://www.udiscovermusic.com/wp-content/uploads/2019/05/Rihanna-Good-Girl-Gone-Bad-album-cover-820.jpg", 128)
+    val image = Image(
+        "https://www.udiscovermusic.com/wp-content/uploads/2019/05/Rihanna-Good-Girl-Gone-Bad-album-cover-820.jpg",
+        128
+    )
     val album = Album(listOf(image))
     val track = Track(link, "My Track Best", album)
     val item = Item(track)
@@ -89,7 +90,11 @@ fun MyScreenContentPreview() {
 
 @Composable
 fun MixKollectiveTitle() {
-    Text(text = "Get Your New Random Song", Modifier.padding(15.dp), fontSize = 30.sp)
+    Row(
+        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+    ) {
+        Text(text = "Get Your New Random Song", Modifier.padding(15.dp), fontSize = 26.sp)
+    }
 }
 
 @Composable
@@ -101,8 +106,7 @@ fun RandomizerButton(
         modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
     ) {
         Button(
-            modifier = Modifier.padding(16.dp),
-            onClick = onRandomizerButtonClicked
+            modifier = Modifier.padding(16.dp), onClick = onRandomizerButtonClicked
         ) {
             Text(text = "New Song", modifier.padding(10.dp))
         }
@@ -118,13 +122,26 @@ fun ResultWindow(song: Item?) {
             Row(
                 modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
             ) {
+                Text(
+                    text = "New Song",
+                    Modifier
+                        .padding(10.dp),
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colors.primary,
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+            ) {
                 val context = LocalContext.current
                 Text(
                     text = Hyperlink(text = song.track.name, url = song.track.externalUrls.spotify),
                     Modifier
                         .padding(10.dp)
                         .clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(song.track.externalUrls.spotify))
+                            val intent = Intent(
+                                Intent.ACTION_VIEW, Uri.parse(song.track.externalUrls.spotify)
+                            )
                             startActivity(context, intent, null)
                         },
                     fontSize = 30.sp,
@@ -138,12 +155,31 @@ fun ResultWindow(song: Item?) {
                 Image(
                     painter = rememberAsyncImagePainter(song.track.album.images[0].url),
                     contentDescription = null,
-                    Modifier.padding(10.dp).testTag("Image"),
+                    Modifier
+                        .padding(10.dp)
+                        .testTag("Image"),
                     contentScale = ContentScale.Crop,
                 )
             }
         }
     }
+}
+
+@Composable
+fun TextFilterTitle() {
+    Text(text = "Filter by word")
+}
+
+@Composable
+fun FilterInputField() {
+    var value by remember {
+        mutableStateOf("")
+    }
+    TextField(
+        value = {value},
+        onValueChange = {
+        }
+    )
 }
 
 @Composable
